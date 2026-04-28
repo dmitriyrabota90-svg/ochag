@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ochag-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ochag
+      POSTGRES_USER: ochag
+      POSTGRES_PASSWORD: ochag
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ochag -d ochag"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ochag-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgresql://ochag:ochag@postgres:5432/ochag?schema=public
+      APP_BASE_URL: http://localhost:3000
+      AUTH_ACCESS_TOKEN_SECRET: local-development-access-secret
+      AUTH_ACCESS_TOKEN_TTL: 15m
+      AUTH_REFRESH_TOKEN_TTL_DAYS: 30
+      AUTH_PASSWORD_RESET_TOKEN_TTL_MINUTES: 30
+      AUTH_PASSWORD_SALT_ROUNDS: 12
+    command: sh -c "npx prisma migrate deploy && node dist/main"
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres-data:

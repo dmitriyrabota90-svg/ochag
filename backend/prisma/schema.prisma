@@ -1,0 +1,475 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FamilyRole {
+  OWNER
+  ADULT
+  CHILD
+}
+
+enum TaskStatus {
+  TODO
+  ACTIVE
+  IN_PROGRESS
+  PENDING_CONFIRMATION
+  DONE
+  CONFIRMED
+  SKIPPED
+  CANCELLED
+}
+
+enum TaskRecurrence {
+  NONE
+  DAILY
+  WEEKLY
+}
+
+enum InitiativeStatus {
+  DRAFT
+  ACTIVE
+  DISCUSSION
+  APPROVED
+  APPROVED_WITHOUT_REWARD
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+enum GoalStatus {
+  ACTIVE
+  AWAITING_EXECUTION
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  READ
+}
+
+enum RewardStatus {
+  PROPOSED
+  ACTIVE
+  REJECTED
+}
+
+enum RewardPaymentMode {
+  SPARKS
+  LEVEL_FREE
+}
+
+enum RewardRequestStatus {
+  IN_PROGRESS
+  FULFILLED
+  RECEIVED
+  CANCEL_REQUESTED
+  CANCELLED
+}
+
+model User {
+  id                   String                @id @default(cuid())
+  email                String                @unique
+  displayName          String?
+  passwordHash         String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  memberships          FamilyMember[]
+  assignedTasks        Task[]                @relation("AssignedTasks")
+  createdTasks         Task[]                @relation("CreatedTasks")
+  taskTemplates        TaskTemplate[]
+  taskComments         TaskComment[]
+  initiatives          Initiative[]          @relation("SubmittedInitiatives")
+  reviewedInitiatives  Initiative[]          @relation("ReviewedInitiatives")
+  rewards              Reward[]              @relation("ProposedRewards")
+  approvedRewards      Reward[]              @relation("ApprovedRewards")
+  rewardTemplates      RewardTemplate[]
+  historyEvents        HistoryEvent[]
+  notifications        Notification[]
+  refreshSessions      RefreshSession[]
+  passwordResetTokens  PasswordResetToken[]
+  familyDeleteRequests FamilyDeleteRequest[]
+}
+
+model RefreshSession {
+  id        String    @id @default(cuid())
+  tokenId   String    @unique
+  tokenHash String
+  userId    String
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenId   String    @unique
+  tokenHash String
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, usedAt])
+  @@index([expiresAt])
+}
+
+model Family {
+  id                   String                             @id @default(cuid())
+  name                 String
+  inviteCode           String?                            @unique
+  createdAt            DateTime                           @default(now())
+  updatedAt            DateTime                           @updatedAt
+  members              FamilyMember[]
+  tasks                Task[]
+  taskTemplates        TaskTemplate[]
+  memberProgresses     MemberProgress[]
+  sparkLedgers         SparkLedger[]
+  experienceLedgers    ExperienceLedger[]
+  initiatives          Initiative[]
+  rewards              Reward[]
+  rewardTemplates      RewardTemplate[]
+  rewardRequests       RewardRequest[]
+  goals                FamilyGoal[]
+  goalConfirmations    FamilyGoalCompletionConfirmation[]
+  historyEvents        HistoryEvent[]
+  notifications        Notification[]
+  familyDeleteRequests FamilyDeleteRequest[]
+}
+
+model FamilyDeleteRequest {
+  id        String    @id @default(cuid())
+  tokenId   String    @unique
+  tokenHash String
+  familyId  String
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  family    Family    @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([familyId, usedAt])
+  @@index([userId, usedAt])
+  @@index([expiresAt])
+}
+
+model FamilyMember {
+  id                     String                             @id @default(cuid())
+  familyId               String
+  userId                 String
+  role                   FamilyRole                         @default(ADULT)
+  createdAt              DateTime                           @default(now())
+  family                 Family                             @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user                   User                               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  progress               MemberProgress?
+  sparkLedgers           SparkLedger[]
+  experienceLedgers      ExperienceLedger[]
+  rewardRequests         RewardRequest[]                    @relation("RewardRequester")
+  providedRewardRequests RewardRequest[]                    @relation("RewardProvider")
+  goalConfirmations      FamilyGoalCompletionConfirmation[]
+
+  @@unique([familyId, userId])
+  @@index([userId])
+}
+
+model Task {
+  id                String             @id @default(cuid())
+  familyId          String
+  title             String
+  description       String?
+  status            TaskStatus         @default(ACTIVE)
+  dueAt             DateTime?
+  assigneeId        String?
+  createdById       String?
+  rewardSparks      Int                @default(0)
+  rewardExperience  Int                @default(0)
+  submittedAt       DateTime?
+  confirmedAt       DateTime?
+  rejectedAt        DateTime?
+  deletedAt         DateTime?
+  recurrence        TaskRecurrence     @default(NONE)
+  recurringParentId String?
+  templateId        String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  family            Family             @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  assignee          User?              @relation("AssignedTasks", fields: [assigneeId], references: [id], onDelete: SetNull)
+  createdBy         User?              @relation("CreatedTasks", fields: [createdById], references: [id], onDelete: SetNull)
+  template          TaskTemplate?      @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  comments          TaskComment[]
+  sparkLedgers      SparkLedger[]
+  experienceLedgers ExperienceLedger[]
+
+  @@index([familyId, status])
+  @@index([assigneeId])
+  @@index([createdById])
+  @@index([templateId])
+  @@index([recurringParentId])
+}
+
+model TaskComment {
+  id        String   @id @default(cuid())
+  taskId    String
+  userId    String
+  body      String
+  createdAt DateTime @default(now())
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, createdAt])
+}
+
+model TaskTemplate {
+  id               String         @id @default(cuid())
+  familyId         String
+  title            String
+  description      String?
+  rewardSparks     Int            @default(0)
+  rewardExperience Int            @default(0)
+  recurrence       TaskRecurrence @default(NONE)
+  createdById      String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  family           Family         @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdBy        User           @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  tasks            Task[]
+
+  @@index([familyId])
+}
+
+model MemberProgress {
+  id         String       @id @default(cuid())
+  familyId   String
+  memberId   String       @unique
+  sparks     Int          @default(0)
+  experience Int          @default(0)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  family     Family       @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  member     FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([familyId])
+}
+
+model SparkLedger {
+  id              String         @id @default(cuid())
+  familyId        String
+  memberId        String
+  taskId          String?
+  initiativeId    String?
+  rewardRequestId String?
+  familyGoalId    String?
+  amount          Int
+  reason          String
+  createdAt       DateTime       @default(now())
+  family          Family         @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  member          FamilyMember   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  task            Task?          @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  initiative      Initiative?    @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
+  rewardRequest   RewardRequest? @relation(fields: [rewardRequestId], references: [id], onDelete: SetNull)
+  familyGoal      FamilyGoal?    @relation(fields: [familyGoalId], references: [id], onDelete: SetNull)
+
+  @@index([familyId, createdAt])
+  @@index([memberId])
+  @@index([initiativeId])
+  @@index([rewardRequestId])
+  @@index([familyGoalId])
+}
+
+model ExperienceLedger {
+  id           String       @id @default(cuid())
+  familyId     String
+  memberId     String
+  taskId       String?
+  initiativeId String?
+  familyGoalId String?
+  amount       Int
+  reason       String
+  createdAt    DateTime     @default(now())
+  family       Family       @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  member       FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  task         Task?        @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  initiative   Initiative?  @relation(fields: [initiativeId], references: [id], onDelete: SetNull)
+  familyGoal   FamilyGoal?  @relation(fields: [familyGoalId], references: [id], onDelete: SetNull)
+
+  @@index([familyId, createdAt])
+  @@index([memberId])
+  @@index([initiativeId])
+  @@index([familyGoalId])
+}
+
+model Initiative {
+  id                    String             @id @default(cuid())
+  familyId              String
+  title                 String
+  description           String?
+  status                InitiativeStatus   @default(DISCUSSION)
+  createdById           String?
+  discussionLockedUntil DateTime?
+  finalSparks           Int?
+  decidedById           String?
+  decidedAt             DateTime?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  family                Family             @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdBy             User?              @relation("SubmittedInitiatives", fields: [createdById], references: [id], onDelete: SetNull)
+  decidedBy             User?              @relation("ReviewedInitiatives", fields: [decidedById], references: [id], onDelete: SetNull)
+  sparkLedgers          SparkLedger[]
+  experienceLedgers     ExperienceLedger[]
+
+  @@index([familyId, status])
+  @@index([createdById])
+  @@index([decidedById])
+}
+
+model Reward {
+  id            String            @id @default(cuid())
+  familyId      String
+  title         String
+  description   String?
+  pointsCost    Int               @default(0)
+  paymentMode   RewardPaymentMode @default(SPARKS)
+  status        RewardStatus      @default(PROPOSED)
+  levelRequired Int?
+  createdById   String?
+  approvedById  String?
+  approvedAt    DateTime?
+  rejectedAt    DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  family        Family            @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdBy     User?             @relation("ProposedRewards", fields: [createdById], references: [id], onDelete: SetNull)
+  approvedBy    User?             @relation("ApprovedRewards", fields: [approvedById], references: [id], onDelete: SetNull)
+  requests      RewardRequest[]
+
+  @@index([familyId, status])
+  @@index([createdById])
+  @@index([approvedById])
+}
+
+model RewardTemplate {
+  id          String            @id @default(cuid())
+  familyId    String
+  title       String
+  description String?
+  pointsCost  Int               @default(0)
+  paymentMode RewardPaymentMode @default(SPARKS)
+  createdById String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  family      Family            @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdBy   User              @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([familyId])
+}
+
+model RewardRequest {
+  id                  String               @id @default(cuid())
+  familyId            String
+  rewardId            String
+  requesterMemberId   String
+  providerMemberId    String
+  status              RewardRequestStatus  @default(IN_PROGRESS)
+  statusBeforeCancel  RewardRequestStatus?
+  paymentMode         RewardPaymentMode
+  sparksCost          Int                  @default(0)
+  levelSnapshot       Int?
+  fulfilledAt         DateTime?
+  receivedAt          DateTime?
+  cancelRequestedById String?
+  cancelRequestedAt   DateTime?
+  cancelledAt         DateTime?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  family              Family               @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  reward              Reward               @relation(fields: [rewardId], references: [id], onDelete: Cascade)
+  requester           FamilyMember         @relation("RewardRequester", fields: [requesterMemberId], references: [id], onDelete: Cascade)
+  provider            FamilyMember         @relation("RewardProvider", fields: [providerMemberId], references: [id], onDelete: Cascade)
+  sparkLedgers        SparkLedger[]
+
+  @@index([familyId, status])
+  @@index([rewardId])
+  @@index([requesterMemberId])
+  @@index([providerMemberId])
+}
+
+model FamilyGoal {
+  id                String                             @id @default(cuid())
+  familyId          String
+  title             String
+  description       String?
+  status            GoalStatus                         @default(ACTIVE)
+  targetSparks      Int                                @default(0)
+  currentSparks     Int                                @default(0)
+  targetAt          DateTime?
+  achievedAt        DateTime?
+  completedAt       DateTime?
+  createdAt         DateTime                           @default(now())
+  updatedAt         DateTime                           @updatedAt
+  family            Family                             @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  confirmations     FamilyGoalCompletionConfirmation[]
+  sparkLedgers      SparkLedger[]
+  experienceLedgers ExperienceLedger[]
+
+  @@index([familyId, status])
+}
+
+model FamilyGoalCompletionConfirmation {
+  id        String       @id @default(cuid())
+  familyId  String
+  goalId    String
+  memberId  String
+  createdAt DateTime     @default(now())
+  family    Family       @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  goal      FamilyGoal   @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  member    FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([goalId, memberId])
+  @@index([familyId])
+  @@index([memberId])
+}
+
+model HistoryEvent {
+  id        String   @id @default(cuid())
+  familyId  String
+  actorId   String?
+  type      String
+  payload   Json?
+  createdAt DateTime @default(now())
+  family    Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([familyId, createdAt])
+}
+
+model Notification {
+  id        String             @id @default(cuid())
+  familyId  String
+  userId    String
+  type      String
+  title     String
+  body      String?
+  payload   Json?
+  status    NotificationStatus @default(PENDING)
+  createdAt DateTime           @default(now())
+  readAt    DateTime?
+  family    Family             @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([userId, createdAt])
+  @@index([familyId])
+}
