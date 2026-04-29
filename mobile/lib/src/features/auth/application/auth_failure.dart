@@ -5,6 +5,7 @@ enum AuthRequest {
   register,
   forgotPassword,
   resetPassword,
+  updateProfile,
 }
 
 enum AuthFailure {

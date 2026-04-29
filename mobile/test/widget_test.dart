@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ochag_mobile/src/features/auth/application/auth_failure.dart';
 import 'package:ochag_mobile/src/features/auth/presentation/auth_form_validators.dart';
 import 'package:ochag_mobile/src/features/family_setup/domain/family.dart';
+import 'package:ochag_mobile/src/features/feedback/data/feedback_dto.dart';
+import 'package:ochag_mobile/src/features/feedback/domain/feedback_entry.dart';
 import 'package:ochag_mobile/src/features/goal/application/family_goal_controller.dart';
 import 'package:ochag_mobile/src/features/history/domain/history.dart';
 import 'package:ochag_mobile/src/features/initiatives/domain/initiative.dart';
@@ -63,6 +65,21 @@ void main() {
     expect(FamilyRole.child.apiValue, 'CHILD');
     expect(FamilyRole.owner.isAdult, isTrue);
     expect(FamilyRole.child.isAdult, isFalse);
+  });
+
+  test('feedback request maps to backend payload shape', () {
+    final dto = FeedbackRequestDto.fromDomain(
+      const FeedbackSubmission(
+        type: FeedbackType.bug,
+        text: 'Something broke',
+      ),
+    );
+
+    expect(FeedbackType.idea.apiValue, 'idea');
+    expect(dto.toJson(), {
+      'type': 'bug',
+      'text': 'Something broke',
+    });
   });
 
   test('task recurrence maps to backend values', () {

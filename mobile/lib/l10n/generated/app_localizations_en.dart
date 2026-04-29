@@ -199,13 +199,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get familyInviteTitle => 'Invite';
 
   @override
-  String get createInviteLinkAction => 'Create invite link';
+  String get createInviteLinkAction => 'Create invite';
 
   @override
   String get regenerateInviteCodeAction => 'Regenerate code';
 
   @override
+  String get inviteCodeDisplayLabel => 'Invite code';
+
+  @override
+  String get inviteCodeOnlyMessage =>
+      'Share this code with a family member. A public invite link is not configured for this beta build.';
+
+  @override
+  String get copyInviteCodeAction => 'Copy code';
+
+  @override
   String get copyInviteLinkAction => 'Copy invite link';
+
+  @override
+  String get inviteCodeCopiedMessage => 'Invite code copied.';
+
+  @override
+  String get inviteLinkCopiedMessage => 'Invite link copied.';
 
   @override
   String get familyMembersTitle => 'Members';
@@ -701,7 +717,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rewardPaymentHint =>
-      'Spark rewards charge immediately when requested. Free level rewards use the current level allowance if backend confirms it is available.';
+      'Spark rewards are charged immediately when requested. A free level reward is available if the current level allowance has not been used yet.';
 
   @override
   String get rewardSparksChargeHint =>
@@ -959,6 +975,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileTitle => 'Profile';
 
   @override
+  String get editDisplayNameAction => 'Edit name';
+
+  @override
+  String get updateDisplayNameTitle => 'Edit name';
+
+  @override
+  String get displayNameRequiredValidationError => 'Use 1-80 characters.';
+
+  @override
+  String get displayNameUpdatedMessage => 'Name updated.';
+
+  @override
   String get notificationsTitle => 'Notifications';
 
   @override
@@ -1077,7 +1105,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feedbackBetaMessage =>
-      'Use this entry point during beta to collect notes from family testers. Connect the final feedback channel before public release.';
+      'Share bugs, ideas, or notes from beta testing. Your message helps us polish Ochag before release.';
+
+  @override
+  String get feedbackTypeLabel => 'What is this about?';
+
+  @override
+  String get feedbackTypeBug => 'Bug';
+
+  @override
+  String get feedbackTypeIdea => 'Idea';
+
+  @override
+  String get feedbackTypeFeedback => 'General feedback';
+
+  @override
+  String get feedbackTypeValidationError => 'Choose a feedback type.';
+
+  @override
+  String get feedbackTextLabel => 'Message';
+
+  @override
+  String get feedbackTextHint =>
+      'Tell us what happened or what would make Ochag better.';
+
+  @override
+  String get feedbackTextValidationError =>
+      'Write a short message before sending.';
+
+  @override
+  String get sendFeedbackAction => 'Send';
+
+  @override
+  String get feedbackSentMessage => 'Feedback sent. Thank you.';
+
+  @override
+  String get feedbackUnavailableMessage =>
+      'Feedback sending is not connected yet. Please use the beta contact channel for now.';
+
+  @override
+  String get feedbackNetworkErrorMessage =>
+      'Could not send feedback. Check your connection and try again.';
+
+  @override
+  String get feedbackServerErrorMessage =>
+      'Could not send feedback right now. Try again later.';
+
+  @override
+  String get feedbackSubmitErrorMessage =>
+      'Could not send feedback. Try again.';
 
   @override
   String get homeFoundationReady =>

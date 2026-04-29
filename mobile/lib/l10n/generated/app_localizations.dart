@@ -461,7 +461,7 @@ abstract class AppLocalizations {
   /// No description provided for @createInviteLinkAction.
   ///
   /// In en, this message translates to:
-  /// **'Create invite link'**
+  /// **'Create invite'**
   String get createInviteLinkAction;
 
   /// No description provided for @regenerateInviteCodeAction.
@@ -470,11 +470,41 @@ abstract class AppLocalizations {
   /// **'Regenerate code'**
   String get regenerateInviteCodeAction;
 
+  /// No description provided for @inviteCodeDisplayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite code'**
+  String get inviteCodeDisplayLabel;
+
+  /// No description provided for @inviteCodeOnlyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this code with a family member. A public invite link is not configured for this beta build.'**
+  String get inviteCodeOnlyMessage;
+
+  /// No description provided for @copyInviteCodeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy code'**
+  String get copyInviteCodeAction;
+
   /// No description provided for @copyInviteLinkAction.
   ///
   /// In en, this message translates to:
   /// **'Copy invite link'**
   String get copyInviteLinkAction;
+
+  /// No description provided for @inviteCodeCopiedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite code copied.'**
+  String get inviteCodeCopiedMessage;
+
+  /// No description provided for @inviteLinkCopiedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite link copied.'**
+  String get inviteLinkCopiedMessage;
 
   /// No description provided for @familyMembersTitle.
   ///
@@ -1433,7 +1463,7 @@ abstract class AppLocalizations {
   /// No description provided for @rewardPaymentHint.
   ///
   /// In en, this message translates to:
-  /// **'Spark rewards charge immediately when requested. Free level rewards use the current level allowance if backend confirms it is available.'**
+  /// **'Spark rewards are charged immediately when requested. A free level reward is available if the current level allowance has not been used yet.'**
   String get rewardPaymentHint;
 
   /// No description provided for @rewardSparksChargeHint.
@@ -1922,6 +1952,30 @@ abstract class AppLocalizations {
   /// **'Profile'**
   String get profileTitle;
 
+  /// No description provided for @editDisplayNameAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit name'**
+  String get editDisplayNameAction;
+
+  /// No description provided for @updateDisplayNameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit name'**
+  String get updateDisplayNameTitle;
+
+  /// No description provided for @displayNameRequiredValidationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 1-80 characters.'**
+  String get displayNameRequiredValidationError;
+
+  /// No description provided for @displayNameUpdatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Name updated.'**
+  String get displayNameUpdatedMessage;
+
   /// No description provided for @notificationsTitle.
   ///
   /// In en, this message translates to:
@@ -2159,8 +2213,92 @@ abstract class AppLocalizations {
   /// No description provided for @feedbackBetaMessage.
   ///
   /// In en, this message translates to:
-  /// **'Use this entry point during beta to collect notes from family testers. Connect the final feedback channel before public release.'**
+  /// **'Share bugs, ideas, or notes from beta testing. Your message helps us polish Ochag before release.'**
   String get feedbackBetaMessage;
+
+  /// No description provided for @feedbackTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'What is this about?'**
+  String get feedbackTypeLabel;
+
+  /// No description provided for @feedbackTypeBug.
+  ///
+  /// In en, this message translates to:
+  /// **'Bug'**
+  String get feedbackTypeBug;
+
+  /// No description provided for @feedbackTypeIdea.
+  ///
+  /// In en, this message translates to:
+  /// **'Idea'**
+  String get feedbackTypeIdea;
+
+  /// No description provided for @feedbackTypeFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'General feedback'**
+  String get feedbackTypeFeedback;
+
+  /// No description provided for @feedbackTypeValidationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a feedback type.'**
+  String get feedbackTypeValidationError;
+
+  /// No description provided for @feedbackTextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get feedbackTextLabel;
+
+  /// No description provided for @feedbackTextHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what happened or what would make Ochag better.'**
+  String get feedbackTextHint;
+
+  /// No description provided for @feedbackTextValidationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a short message before sending.'**
+  String get feedbackTextValidationError;
+
+  /// No description provided for @sendFeedbackAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get sendFeedbackAction;
+
+  /// No description provided for @feedbackSentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback sent. Thank you.'**
+  String get feedbackSentMessage;
+
+  /// No description provided for @feedbackUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback sending is not connected yet. Please use the beta contact channel for now.'**
+  String get feedbackUnavailableMessage;
+
+  /// No description provided for @feedbackNetworkErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send feedback. Check your connection and try again.'**
+  String get feedbackNetworkErrorMessage;
+
+  /// No description provided for @feedbackServerErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send feedback right now. Try again later.'**
+  String get feedbackServerErrorMessage;
+
+  /// No description provided for @feedbackSubmitErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send feedback. Try again.'**
+  String get feedbackSubmitErrorMessage;
 
   /// No description provided for @homeFoundationReady.
   ///

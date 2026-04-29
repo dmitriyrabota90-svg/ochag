@@ -14,6 +14,7 @@ import { FamilyGoalModule } from './modules/family-goal/family-goal.module';
 import { HistoryModule } from './modules/history/history.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { FeedbackModule } from './modules/feedback/feedback.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     HistoryModule,
     NotificationsModule,
     AnalyticsModule,
+    FeedbackModule,
   ],
   controllers: [AppController],
   providers: [AppService],

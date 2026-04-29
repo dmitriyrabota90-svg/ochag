@@ -168,6 +168,42 @@ class AuthController extends AsyncNotifier<AuthState> {
     state = const AsyncData(AuthState.unauthenticated());
   }
 
+  Future<bool> updateDisplayName(String displayName) async {
+    final current = state.valueOrNull;
+    if (current == null || !current.isAuthenticated) {
+      return false;
+    }
+
+    state = AsyncData(
+      current.copyWith(
+        isSubmitting: true,
+        clearMessages: true,
+      ),
+    );
+
+    try {
+      final user =
+          await ref.read(authRepositoryProvider).updateDisplayName(displayName);
+      state = AsyncData(
+        AuthState.authenticated(user).copyWith(
+          successMessage: 'profile_name_updated',
+        ),
+      );
+      return true;
+    } catch (error) {
+      state = AsyncData(
+        current.copyWith(
+          failure: authFailureFromError(
+            error,
+            request: AuthRequest.updateProfile,
+          ),
+          isSubmitting: false,
+        ),
+      );
+      return false;
+    }
+  }
+
   Future<bool> _submit({
     required AuthRequest request,
     required Future<AuthUser> Function() action,

@@ -68,9 +68,9 @@ class CurrentFamilyContext {
 class FamilyInvite {
   const FamilyInvite({
     required this.inviteCode,
-    required this.inviteLink,
+    this.inviteLink,
   });
 
   final String inviteCode;
-  final String inviteLink;
+  final String? inviteLink;
 }

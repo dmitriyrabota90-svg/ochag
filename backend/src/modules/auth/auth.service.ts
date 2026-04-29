@@ -13,6 +13,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { UpdateMeDto } from './dto/update-me.dto';
 import { MailService } from './mail.service';
 
 type AuthUser = {
@@ -66,7 +67,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash);
+    const isPasswordValid = await bcrypt.compare(
+      dto.password,
+      user.passwordHash,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -229,6 +233,15 @@ export class AuthService {
     return this.toPublicUser(user);
   }
 
+  async updateMe(userId: string, dto: UpdateMeDto) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { displayName: dto.displayName },
+    });
+
+    return this.toPublicUser(user);
+  }
+
   private async buildAuthResponse(user: AuthUser) {
     const refreshToken = await this.createRefreshSession(user.id);
 
@@ -267,9 +280,7 @@ export class AuthService {
         email: user.email,
       },
       {
-        secret: this.configService.getOrThrow<string>(
-          'auth.accessTokenSecret',
-        ),
+        secret: this.configService.getOrThrow<string>('auth.accessTokenSecret'),
         expiresIn,
       },
     );

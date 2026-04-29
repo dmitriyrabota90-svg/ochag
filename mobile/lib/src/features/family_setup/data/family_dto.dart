@@ -108,18 +108,18 @@ class CurrentFamilyDto {
 class FamilyInviteDto {
   const FamilyInviteDto({
     required this.inviteCode,
-    required this.inviteLink,
+    this.inviteLink,
   });
 
   factory FamilyInviteDto.fromJson(Map<String, dynamic> json) {
     return FamilyInviteDto(
       inviteCode: json['inviteCode'] as String,
-      inviteLink: json['inviteLink'] as String,
+      inviteLink: json['inviteLink'] as String?,
     );
   }
 
   final String inviteCode;
-  final String inviteLink;
+  final String? inviteLink;
 
   FamilyInvite toDomain() {
     return FamilyInvite(

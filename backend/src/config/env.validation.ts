@@ -33,6 +33,18 @@ export function validateEnv(config: RawEnv) {
     throw new Error('AUTH_PASSWORD_SALT_ROUNDS must be an integer >= 10');
   }
 
+  const invitePublicBaseUrl = config.INVITE_PUBLIC_BASE_URL?.trim();
+  if (invitePublicBaseUrl) {
+    try {
+      const url = new URL(invitePublicBaseUrl);
+      if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+        throw new Error('Invalid protocol');
+      }
+    } catch {
+      throw new Error('INVITE_PUBLIC_BASE_URL must be a valid URL');
+    }
+  }
+
   return {
     ...config,
     PORT: String(port),

@@ -7,6 +7,7 @@ import '../../../shared/widgets/app_base_card.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../auth/application/auth_controller.dart';
+import '../../auth/presentation/auth_error_messages.dart';
 import '../../family_setup/presentation/family_settings_screen.dart';
 import '../../feedback/presentation/feedback_screen.dart';
 import '../../history/presentation/history_screen.dart';
@@ -44,7 +45,22 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 if (user != null) ...[
                   const SizedBox(height: 8),
-                  Text(user.email),
+                  Row(
+                    children: [
+                      Expanded(child: Text(user.email)),
+                      IconButton(
+                        tooltip: l10n.editDisplayNameAction,
+                        onPressed: authState?.isSubmitting == true
+                            ? null
+                            : () => _showEditNameDialog(
+                                  context,
+                                  ref,
+                                  user.displayName ?? '',
+                                ),
+                        icon: const Icon(Icons.edit_outlined),
+                      ),
+                    ],
+                  ),
                 ],
               ],
             ),
@@ -101,5 +117,97 @@ class ProfileScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _showEditNameDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String currentDisplayName,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final formKey = GlobalKey<FormState>();
+    final controller = TextEditingController(text: currentDisplayName.trim());
+
+    Future<void> submit(BuildContext dialogContext) async {
+      if (!formKey.currentState!.validate()) {
+        return;
+      }
+
+      final success = await ref
+          .read(authControllerProvider.notifier)
+          .updateDisplayName(controller.text);
+      if (!dialogContext.mounted) {
+        return;
+      }
+
+      if (success) {
+        Navigator.of(dialogContext).pop();
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.displayNameUpdatedMessage)),
+          );
+        }
+        return;
+      }
+
+      final failure = ref.read(authControllerProvider).valueOrNull?.failure;
+      ScaffoldMessenger.of(dialogContext).showSnackBar(
+        SnackBar(content: Text(authErrorMessage(l10n, failure))),
+      );
+    }
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return Consumer(
+          builder: (context, ref, child) {
+            final isSubmitting =
+                ref.watch(authControllerProvider).valueOrNull?.isSubmitting ??
+                    false;
+
+            return AlertDialog(
+              title: Text(l10n.updateDisplayNameTitle),
+              content: Form(
+                key: formKey,
+                child: TextFormField(
+                  controller: controller,
+                  autofocus: true,
+                  enabled: !isSubmitting,
+                  decoration: InputDecoration(labelText: l10n.displayNameLabel),
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted:
+                      isSubmitting ? null : (_) => submit(dialogContext),
+                  validator: (value) {
+                    final trimmed = value?.trim() ?? '';
+                    if (trimmed.isEmpty || trimmed.length > 80) {
+                      return l10n.displayNameRequiredValidationError;
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed:
+                      isSubmitting ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.cancelAction),
+                ),
+                FilledButton(
+                  onPressed: isSubmitting ? null : () => submit(dialogContext),
+                  child: isSubmitting
+                      ? const SizedBox.square(
+                          dimension: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(l10n.saveAction),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    controller.dispose();
   }
 }

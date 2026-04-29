@@ -80,14 +80,48 @@ describe('FamilyService', () => {
     };
   };
 
+  it('returns invite code without a backend localhost link by default', async () => {
+    const { service, prisma } = createService();
+    prisma.familyMember.findFirst.mockResolvedValue(ownerMember);
+
+    const result = await service.createInviteLink(ownerMember.userId);
+
+    expect(result).toEqual({
+      inviteCode: family.inviteCode,
+      inviteLink: null,
+    });
+  });
+
+  it('uses public invite base url when it is configured', async () => {
+    const { service, prisma } = createService();
+    const configService = (
+      service as unknown as {
+        configService: { get: jest.Mock };
+      }
+    ).configService;
+    configService.get.mockImplementation((key: string, fallback?: unknown) =>
+      key === 'app.invitePublicBaseUrl'
+        ? 'https://ochag.example/app/'
+        : fallback,
+    );
+    prisma.familyMember.findFirst.mockResolvedValue(ownerMember);
+
+    const result = await service.createInviteLink(ownerMember.userId);
+
+    expect(result).toEqual({
+      inviteCode: family.inviteCode,
+      inviteLink: `https://ochag.example/app/join-family?code=${family.inviteCode}`,
+    });
+  });
+
   it('prevents creator from leaving when other members remain', async () => {
     const { service, prisma } = createService();
     prisma.familyMember.findFirst.mockResolvedValue(ownerMember);
     prisma.familyMember.findMany.mockResolvedValue([ownerMember, adultMember]);
 
-    await expect(service.leaveCurrentFamily(ownerMember.userId)).rejects.toThrow(
-      BadRequestException,
-    );
+    await expect(
+      service.leaveCurrentFamily(ownerMember.userId),
+    ).rejects.toThrow(BadRequestException);
     expect(prisma.familyMember.delete).not.toHaveBeenCalled();
   });
 
@@ -97,9 +131,9 @@ describe('FamilyService', () => {
     prisma.familyMember.findFirst.mockResolvedValue(currentAdult);
     prisma.familyMember.findMany.mockResolvedValue([adultMember, childMember]);
 
-    await expect(service.leaveCurrentFamily(adultMember.userId)).rejects.toThrow(
-      BadRequestException,
-    );
+    await expect(
+      service.leaveCurrentFamily(adultMember.userId),
+    ).rejects.toThrow(BadRequestException);
     expect(prisma.familyMember.delete).not.toHaveBeenCalled();
   });
 

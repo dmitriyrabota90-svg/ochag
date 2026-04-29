@@ -114,6 +114,31 @@ describe('AuthService', () => {
     expect(mailService.sendPasswordResetEmail).not.toHaveBeenCalled();
   });
 
+  it('updates the current user display name', async () => {
+    const { service, prisma } = createService();
+    const updated = {
+      ...user,
+      displayName: 'New Name',
+      updatedAt: new Date('2026-04-27T00:01:00.000Z'),
+    };
+    prisma.user.update.mockResolvedValue(updated);
+
+    await expect(
+      service.updateMe(user.id, { displayName: 'New Name' }),
+    ).resolves.toEqual({
+      id: user.id,
+      email: user.email,
+      displayName: 'New Name',
+      createdAt: user.createdAt,
+      updatedAt: updated.updatedAt,
+    });
+
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { id: user.id },
+      data: { displayName: 'New Name' },
+    });
+  });
+
   it('resets password and revokes active refresh sessions', async () => {
     const { service, prisma } = createService();
     const tokenId = 'reset-token-id';

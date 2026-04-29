@@ -199,13 +199,29 @@ class AppLocalizationsRu extends AppLocalizations {
   String get familyInviteTitle => 'Приглашение';
 
   @override
-  String get createInviteLinkAction => 'Создать ссылку';
+  String get createInviteLinkAction => 'Создать приглашение';
 
   @override
   String get regenerateInviteCodeAction => 'Обновить код';
 
   @override
+  String get inviteCodeDisplayLabel => 'Код приглашения';
+
+  @override
+  String get inviteCodeOnlyMessage =>
+      'Поделитесь этим кодом с членом семьи. Публичная ссылка приглашения не настроена для этой бета-сборки.';
+
+  @override
+  String get copyInviteCodeAction => 'Скопировать код';
+
+  @override
   String get copyInviteLinkAction => 'Скопировать ссылку';
+
+  @override
+  String get inviteCodeCopiedMessage => 'Код приглашения скопирован.';
+
+  @override
+  String get inviteLinkCopiedMessage => 'Ссылка приглашения скопирована.';
 
   @override
   String get familyMembersTitle => 'Участники';
@@ -701,7 +717,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get rewardPaymentHint =>
-      'Награды за искры списываются сразу при запросе. Бесплатная награда уровня используется, если backend подтвердит доступность права.';
+      'Награды за Искры списываются сразу при запросе. Бесплатная награда уровня доступна, если право текущего уровня еще не использовано.';
 
   @override
   String get rewardSparksChargeHint =>
@@ -960,6 +976,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get profileTitle => 'Профиль';
 
   @override
+  String get editDisplayNameAction => 'Изменить имя';
+
+  @override
+  String get updateDisplayNameTitle => 'Изменить имя';
+
+  @override
+  String get displayNameRequiredValidationError => 'Используйте 1-80 символов.';
+
+  @override
+  String get displayNameUpdatedMessage => 'Имя обновлено.';
+
+  @override
   String get notificationsTitle => 'Уведомления';
 
   @override
@@ -1078,7 +1106,55 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get feedbackBetaMessage =>
-      'Используйте этот вход во время беты, чтобы собирать заметки от семейных тестировщиков. Перед публичным релизом подключите финальный канал обратной связи.';
+      'Поделитесь ошибкой, идеей или заметкой по бете. Это поможет довести Очаг до релиза.';
+
+  @override
+  String get feedbackTypeLabel => 'О чем отзыв?';
+
+  @override
+  String get feedbackTypeBug => 'Ошибка';
+
+  @override
+  String get feedbackTypeIdea => 'Идея';
+
+  @override
+  String get feedbackTypeFeedback => 'Общий отзыв';
+
+  @override
+  String get feedbackTypeValidationError => 'Выберите тип отзыва.';
+
+  @override
+  String get feedbackTextLabel => 'Сообщение';
+
+  @override
+  String get feedbackTextHint =>
+      'Расскажите, что произошло или что сделает Очаг лучше.';
+
+  @override
+  String get feedbackTextValidationError =>
+      'Напишите короткое сообщение перед отправкой.';
+
+  @override
+  String get sendFeedbackAction => 'Отправить';
+
+  @override
+  String get feedbackSentMessage => 'Отзыв отправлен. Спасибо.';
+
+  @override
+  String get feedbackUnavailableMessage =>
+      'Отправка отзыва пока не подключена. Используйте бета-канал связи.';
+
+  @override
+  String get feedbackNetworkErrorMessage =>
+      'Не удалось отправить отзыв. Проверьте соединение и попробуйте еще раз.';
+
+  @override
+  String get feedbackServerErrorMessage =>
+      'Не удалось отправить отзыв сейчас. Попробуйте позже.';
+
+  @override
+  String get feedbackSubmitErrorMessage =>
+      'Не удалось отправить отзыв. Попробуйте еще раз.';
 
   @override
   String get homeFoundationReady =>

@@ -324,6 +324,7 @@ class _InviteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final inviteCode = invite?.inviteCode ?? existingInviteCode;
+    final inviteLink = invite?.inviteLink;
 
     return AppBaseCard(
       child: Column(
@@ -334,15 +335,35 @@ class _InviteCard extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          Text(inviteCode ?? l10n.inviteCodeNotCreatedMessage),
-          if (invite?.inviteLink != null) ...[
+          if (inviteCode == null)
+            Text(l10n.inviteCodeNotCreatedMessage)
+          else ...[
+            SelectableText('${l10n.inviteCodeDisplayLabel}: $inviteCode'),
             const SizedBox(height: 8),
-            SelectableText(invite!.inviteLink),
+            Text(l10n.inviteCodeOnlyMessage),
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                onPressed: () => Clipboard.setData(
-                  ClipboardData(text: invite!.inviteLink),
+                onPressed: () => _copyInviteValue(
+                  context,
+                  inviteCode,
+                  l10n.inviteCodeCopiedMessage,
+                ),
+                icon: const Icon(Icons.copy),
+                label: Text(l10n.copyInviteCodeAction),
+              ),
+            ),
+          ],
+          if (inviteLink != null && inviteLink.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            SelectableText(inviteLink),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () => _copyInviteValue(
+                  context,
+                  inviteLink,
+                  l10n.inviteLinkCopiedMessage,
                 ),
                 icon: const Icon(Icons.copy),
                 label: Text(l10n.copyInviteLinkAction),
@@ -366,6 +387,20 @@ class _InviteCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _copyInviteValue(
+    BuildContext context,
+    String value,
+    String message,
+  ) async {
+    await Clipboard.setData(ClipboardData(text: value));
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
     );
   }
 }

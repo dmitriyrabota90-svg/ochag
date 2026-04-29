@@ -2,6 +2,7 @@ export default () => ({
   app: {
     nodeEnv: process.env.NODE_ENV ?? 'development',
     port: Number(process.env.PORT ?? 3000),
+    invitePublicBaseUrl: process.env.INVITE_PUBLIC_BASE_URL?.trim() || null,
   },
   auth: {
     accessTokenSecret: process.env.AUTH_ACCESS_TOKEN_SECRET,

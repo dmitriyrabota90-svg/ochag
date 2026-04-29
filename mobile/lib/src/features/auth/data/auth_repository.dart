@@ -74,6 +74,14 @@ class AuthRepository {
     return AuthUserDto.fromJson(_requireMap(response.data)).toDomain();
   }
 
+  Future<AuthUser> updateDisplayName(String displayName) async {
+    final response = await _apiClient.patch<Map<String, dynamic>>(
+      '/me',
+      data: {'displayName': displayName.trim()},
+    );
+    return AuthUserDto.fromJson(_requireMap(response.data)).toDomain();
+  }
+
   Future<void> forgotPassword(String email) async {
     await _apiClient.post<Map<String, dynamic>>(
       '/auth/forgot-password',

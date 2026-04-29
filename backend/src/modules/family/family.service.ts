@@ -531,14 +531,16 @@ export class FamilyService {
   }
 
   private toInviteResponse(inviteCode: string) {
-    const appBaseUrl = this.configService.get<string>(
-      'auth.appBaseUrl',
-      'http://localhost:3000',
+    const publicBaseUrl = this.configService.get<string | null>(
+      'app.invitePublicBaseUrl',
+      null,
     );
 
     return {
       inviteCode,
-      inviteLink: `${appBaseUrl}/join-family?code=${inviteCode}`,
+      inviteLink: publicBaseUrl
+        ? `${publicBaseUrl.replace(/\/+$/, '')}/join-family?code=${encodeURIComponent(inviteCode)}`
+        : null,
     };
   }
 
