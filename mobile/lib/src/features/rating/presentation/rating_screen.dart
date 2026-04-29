@@ -32,13 +32,13 @@ class RatingScreen extends ConsumerWidget {
       body: ratingAsync.when(
         loading: () => const AppLoadingState(),
         error: (error, stackTrace) => AppErrorState(
-          message: error.toString(),
+          message: l10n.genericErrorMessage,
           onRetry: () => ref.read(ratingControllerProvider.notifier).reload(),
         ),
         data: (state) {
           if (state.errorMessage != null) {
             return AppErrorState(
-              message: state.errorMessage!,
+              message: l10n.genericErrorMessage,
               onRetry: () =>
                   ref.read(ratingControllerProvider.notifier).reload(),
             );

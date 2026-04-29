@@ -52,7 +52,7 @@ class GoalScreen extends ConsumerWidget {
       body: goalAsync.when(
         loading: () => const AppLoadingState(),
         error: (error, stackTrace) => AppErrorState(
-          message: error.toString(),
+          message: l10n.genericErrorMessage,
           onRetry: () => controller.reload(),
         ),
         data: (state) {

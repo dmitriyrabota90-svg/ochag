@@ -47,7 +47,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
       body: historyAsync.when(
         loading: () => const AppLoadingState(),
         error: (error, stackTrace) => AppErrorState(
-          message: error.toString(),
+          message: l10n.genericErrorMessage,
           onRetry: () => ref.read(historyControllerProvider.notifier).reload(),
         ),
         data: (state) => _HistoryContent(
@@ -124,7 +124,7 @@ class _HistoryContent extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           if (state.errorMessage != null)
-            AppBaseCard(child: Text(state.errorMessage!)),
+            AppBaseCard(child: Text(l10n.genericErrorMessage)),
           if (state.items.isEmpty)
             AppBaseCard(child: Text(l10n.noHistoryMessage))
           else
@@ -163,14 +163,20 @@ class _HistoryEventCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(event.summary, style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            historyEventSummaryLabel(l10n, event),
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 8),
           Text(date),
           Text(
               '${l10n.historyActorLabel}: ${event.actor?.name ?? l10n.unknownUserLabel}'),
           Text(
               '${l10n.historyEntityFilterLabel}: ${historyEntityTypeLabel(l10n, event.entityType)}'),
-          Text('${l10n.historyEventTypeFilterLabel}: ${event.eventType}'),
+          Text(
+            '${l10n.historyEventTypeFilterLabel}: '
+            '${historyEventTypeLabel(l10n, event.eventType)}',
+          ),
         ],
       ),
     );

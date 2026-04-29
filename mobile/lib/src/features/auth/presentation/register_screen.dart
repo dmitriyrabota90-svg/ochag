@@ -6,6 +6,7 @@ import 'package:ochag_mobile/l10n/generated/app_localizations.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../application/auth_controller.dart';
+import 'auth_error_messages.dart';
 import 'auth_form_validators.dart';
 import 'auth_screen.dart';
 
@@ -42,10 +43,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final isSubmitting = authState?.isSubmitting ?? false;
 
     ref.listen(authControllerProvider, (previous, next) {
-      final error = next.valueOrNull?.errorMessage;
-      if (error != null && error.isNotEmpty) {
+      final failure = next.valueOrNull?.failure;
+      if (failure != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error)),
+          SnackBar(content: Text(authErrorMessage(l10n, failure))),
         );
       }
     });

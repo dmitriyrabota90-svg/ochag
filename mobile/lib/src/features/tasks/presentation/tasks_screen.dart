@@ -66,7 +66,7 @@ class TasksScreen extends ConsumerWidget {
       body: tasksAsync.when(
         loading: () => const AppLoadingState(),
         error: (error, stackTrace) => AppErrorState(
-          message: error.toString(),
+          message: l10n.genericErrorMessage,
           onRetry: () => ref.read(tasksControllerProvider.notifier).reload(),
         ),
         data: (state) => _TasksList(state: state),

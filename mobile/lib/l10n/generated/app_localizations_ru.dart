@@ -84,6 +84,36 @@ class AppLocalizationsRu extends AppLocalizations {
   String get authError => 'Что-то пошло не так. Попробуйте еще раз.';
 
   @override
+  String get authInvalidRequestError =>
+      'Проверьте введенные данные и попробуйте еще раз.';
+
+  @override
+  String get authInvalidCredentialsError => 'Email или пароль указаны неверно.';
+
+  @override
+  String get authEmailAlreadyExistsError =>
+      'Аккаунт с таким email уже существует. Попробуйте войти.';
+
+  @override
+  String get authNotFoundError =>
+      'Не удалось найти этот запрос. Попробуйте еще раз.';
+
+  @override
+  String get authResetLinkInvalidError =>
+      'Ссылка для восстановления недействительна или устарела. Запросите новую.';
+
+  @override
+  String get authConflictError =>
+      'Сейчас это действие нельзя выполнить. Попробуйте еще раз.';
+
+  @override
+  String get authServerError => 'Сервер временно недоступен. Попробуйте позже.';
+
+  @override
+  String get authNetworkError =>
+      'Нет соединения с сервером. Проверьте интернет и попробуйте еще раз.';
+
+  @override
   String get genericErrorMessage => 'Что-то пошло не так. Попробуйте еще раз.';
 
   @override
@@ -120,6 +150,20 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get familySetupTitle => 'Настройка семьи';
+
+  @override
+  String get familySetupDescription =>
+      'Создайте новую семью или присоединитесь по приглашению. Если это не тот аккаунт, можно безопасно выйти.';
+
+  @override
+  String get familySetupSwitchAccountTitle => 'Нужен другой аккаунт?';
+
+  @override
+  String get familySetupSwitchAccountDescription =>
+      'Выйдите, чтобы вернуться на экран входа и использовать другой аккаунт.';
+
+  @override
+  String get familySetupSwitchAccountAction => 'Войти в другой аккаунт';
 
   @override
   String get createFamilyTitle => 'Создать семью';

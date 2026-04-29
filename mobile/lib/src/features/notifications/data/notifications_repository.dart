@@ -19,7 +19,7 @@ class NotificationsRepository {
     int limit = 30,
   }) async {
     final response = await _apiClient.get<Map<String, dynamic>>(
-      '/v1/notifications',
+      '/notifications',
       queryParameters: {
         'limit': limit,
         if (cursor != null) 'cursor': cursor,
@@ -34,7 +34,7 @@ class NotificationsRepository {
 
   Future<AppNotification?> markAsRead(String notificationId) async {
     final response = await _apiClient.post<Map<String, dynamic>>(
-      '/v1/notifications/$notificationId/read',
+      '/notifications/$notificationId/read',
     );
     final data = response.data;
     if (data == null) {

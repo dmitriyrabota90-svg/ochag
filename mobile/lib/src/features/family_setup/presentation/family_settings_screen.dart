@@ -51,7 +51,7 @@ class _FamilySettingsScreenState extends ConsumerState<FamilySettingsScreen> {
       body: familyAsync.when(
         loading: () => const AppLoadingState(),
         error: (error, stackTrace) => AppErrorState(
-          message: error.toString(),
+          message: l10n.genericErrorMessage,
           onRetry: () => ref.read(familyControllerProvider.notifier).reload(),
         ),
         data: (state) {

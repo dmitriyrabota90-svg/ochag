@@ -6,6 +6,7 @@ import 'package:ochag_mobile/l10n/generated/app_localizations.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../application/auth_controller.dart';
+import 'auth_error_messages.dart';
 import 'auth_form_validators.dart';
 import 'auth_screen.dart';
 
@@ -86,7 +87,14 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(success ? l10n.resetLinkSentMessage : l10n.authError),
+        content: Text(
+          success
+              ? l10n.resetLinkSentMessage
+              : authErrorMessage(
+                  l10n,
+                  ref.read(authControllerProvider).valueOrNull?.failure,
+                ),
+        ),
       ),
     );
   }

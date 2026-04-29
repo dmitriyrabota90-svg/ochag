@@ -66,7 +66,7 @@ class RewardsScreen extends ConsumerWidget {
       body: rewardsAsync.when(
         loading: () => const AppLoadingState(),
         error: (error, stackTrace) => AppErrorState(
-          message: error.toString(),
+          message: l10n.genericErrorMessage,
           onRetry: () => ref.read(rewardsControllerProvider.notifier).reload(),
         ),
         data: (state) => _RewardsContent(state: state),

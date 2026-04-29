@@ -84,6 +84,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authError => 'Something went wrong. Try again.';
 
   @override
+  String get authInvalidRequestError =>
+      'Check the entered details and try again.';
+
+  @override
+  String get authInvalidCredentialsError => 'Email or password is incorrect.';
+
+  @override
+  String get authEmailAlreadyExistsError =>
+      'An account with this email already exists. Try signing in.';
+
+  @override
+  String get authNotFoundError => 'We could not find this request. Try again.';
+
+  @override
+  String get authResetLinkInvalidError =>
+      'This reset link is invalid or expired. Request a new one.';
+
+  @override
+  String get authConflictError =>
+      'This action cannot be completed right now. Try again.';
+
+  @override
+  String get authServerError =>
+      'Server is temporarily unavailable. Try again later.';
+
+  @override
+  String get authNetworkError =>
+      'No connection to the server. Check your internet and try again.';
+
+  @override
   String get genericErrorMessage => 'Something went wrong. Try again.';
 
   @override
@@ -120,6 +150,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get familySetupTitle => 'Family setup';
+
+  @override
+  String get familySetupDescription =>
+      'Create a new family or join an existing one with an invite. If this is not the right account, you can safely sign out.';
+
+  @override
+  String get familySetupSwitchAccountTitle => 'Need another account?';
+
+  @override
+  String get familySetupSwitchAccountDescription =>
+      'Sign out to return to the sign-in screen and use a different account.';
+
+  @override
+  String get familySetupSwitchAccountAction => 'Sign in with another account';
 
   @override
   String get createFamilyTitle => 'Create your family';

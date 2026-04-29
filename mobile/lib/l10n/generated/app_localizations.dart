@@ -248,6 +248,54 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Try again.'**
   String get authError;
 
+  /// No description provided for @authInvalidRequestError.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the entered details and try again.'**
+  String get authInvalidRequestError;
+
+  /// No description provided for @authInvalidCredentialsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or password is incorrect.'**
+  String get authInvalidCredentialsError;
+
+  /// No description provided for @authEmailAlreadyExistsError.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email already exists. Try signing in.'**
+  String get authEmailAlreadyExistsError;
+
+  /// No description provided for @authNotFoundError.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not find this request. Try again.'**
+  String get authNotFoundError;
+
+  /// No description provided for @authResetLinkInvalidError.
+  ///
+  /// In en, this message translates to:
+  /// **'This reset link is invalid or expired. Request a new one.'**
+  String get authResetLinkInvalidError;
+
+  /// No description provided for @authConflictError.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be completed right now. Try again.'**
+  String get authConflictError;
+
+  /// No description provided for @authServerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Server is temporarily unavailable. Try again later.'**
+  String get authServerError;
+
+  /// No description provided for @authNetworkError.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection to the server. Check your internet and try again.'**
+  String get authNetworkError;
+
   /// No description provided for @genericErrorMessage.
   ///
   /// In en, this message translates to:
@@ -319,6 +367,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Family setup'**
   String get familySetupTitle;
+
+  /// No description provided for @familySetupDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new family or join an existing one with an invite. If this is not the right account, you can safely sign out.'**
+  String get familySetupDescription;
+
+  /// No description provided for @familySetupSwitchAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Need another account?'**
+  String get familySetupSwitchAccountTitle;
+
+  /// No description provided for @familySetupSwitchAccountDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out to return to the sign-in screen and use a different account.'**
+  String get familySetupSwitchAccountDescription;
+
+  /// No description provided for @familySetupSwitchAccountAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with another account'**
+  String get familySetupSwitchAccountAction;
 
   /// No description provided for @createFamilyTitle.
   ///

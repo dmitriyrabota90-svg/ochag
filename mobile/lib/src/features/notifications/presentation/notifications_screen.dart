@@ -8,6 +8,7 @@ import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/app_state_widgets.dart';
 import '../application/notifications_controller.dart';
 import '../domain/notification.dart';
+import 'notification_labels.dart';
 
 class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
@@ -33,7 +34,7 @@ class NotificationsScreen extends ConsumerWidget {
       body: notificationsAsync.when(
         loading: () => const AppLoadingState(),
         error: (error, stackTrace) => AppErrorState(
-          message: error.toString(),
+          message: l10n.genericErrorMessage,
           onRetry: () =>
               ref.read(notificationsControllerProvider.notifier).reload(),
         ),
@@ -59,7 +60,7 @@ class _NotificationsContent extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         children: [
           if (state.errorMessage != null)
-            AppBaseCard(child: Text(state.errorMessage!)),
+            AppBaseCard(child: Text(l10n.genericErrorMessage)),
           if (state.items.isEmpty)
             AppBaseCard(child: Text(l10n.noNotificationsMessage))
           else
@@ -115,6 +116,7 @@ class _NotificationCard extends ConsumerWidget {
     final titleStyle = notification.isRead
         ? theme.textTheme.titleMedium
         : theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700);
+    final body = notification.body.trim();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -140,9 +142,14 @@ class _NotificationCard extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(notification.title, style: titleStyle),
-                      const SizedBox(height: 6),
-                      Text(notification.body),
+                      Text(
+                        notificationTitleLabel(l10n, notification),
+                        style: titleStyle,
+                      ),
+                      if (body.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(body),
+                      ],
                     ],
                   ),
                 ),
@@ -164,7 +171,7 @@ class _NotificationCard extends ConsumerWidget {
                 ),
                 Chip(
                   visualDensity: VisualDensity.compact,
-                  label: Text(notification.type),
+                  label: Text(notificationTypeLabel(l10n, notification)),
                 ),
               ],
             ),

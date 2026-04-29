@@ -59,7 +59,7 @@ class InitiativesScreen extends ConsumerWidget {
       body: initiativesAsync.when(
         loading: () => const AppLoadingState(),
         error: (error, stackTrace) => AppErrorState(
-          message: error.toString(),
+          message: l10n.genericErrorMessage,
           onRetry: () =>
               ref.read(initiativesControllerProvider.notifier).reload(),
         ),

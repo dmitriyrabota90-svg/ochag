@@ -11,6 +11,7 @@ import '../../goal/domain/family_goal.dart';
 import '../../goal/presentation/family_goal_labels.dart';
 import '../../goal/presentation/goal_screen.dart';
 import '../../history/domain/history.dart';
+import '../../history/presentation/history_labels.dart';
 import '../../history/presentation/history_screen.dart';
 import '../../tasks/domain/task.dart';
 import '../../tasks/presentation/task_details_screen.dart';
@@ -42,7 +43,7 @@ class HomeScreen extends ConsumerWidget {
       body: homeAsync.when(
         loading: () => const AppLoadingState(),
         error: (error, stackTrace) => AppErrorState(
-          message: error.toString(),
+          message: l10n.genericErrorMessage,
           onRetry: () => ref.read(homeControllerProvider.notifier).reload(),
         ),
         data: (dashboard) => _HomeContent(dashboard: dashboard),
@@ -380,7 +381,7 @@ class _HistorySection extends StatelessWidget {
                 for (final event in events)
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text(event.summary),
+                    title: Text(historyEventSummaryLabel(l10n, event)),
                     subtitle: Text(
                       DateFormat.MMMd(
                         Localizations.localeOf(context).toString(),

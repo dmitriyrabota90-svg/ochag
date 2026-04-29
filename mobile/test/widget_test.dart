@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ochag_mobile/src/features/auth/application/auth_failure.dart';
 import 'package:ochag_mobile/src/features/auth/presentation/auth_form_validators.dart';
 import 'package:ochag_mobile/src/features/family_setup/domain/family.dart';
 import 'package:ochag_mobile/src/features/goal/application/family_goal_controller.dart';
@@ -22,6 +24,37 @@ void main() {
   test('auth validators reject invalid credentials', () {
     expect(AuthFormValidators.isValidEmail('not-an-email'), isFalse);
     expect(AuthFormValidators.isValidPassword('short'), isFalse);
+  });
+
+  test('auth errors map to beta friendly failures', () {
+    DioException dioError(int statusCode) {
+      return DioException(
+        requestOptions: RequestOptions(path: '/auth/register'),
+        response: Response<dynamic>(
+          requestOptions: RequestOptions(path: '/auth/register'),
+          statusCode: statusCode,
+        ),
+      );
+    }
+
+    expect(
+      authFailureFromError(dioError(409), request: AuthRequest.register),
+      AuthFailure.emailAlreadyExists,
+    );
+    expect(
+      authFailureFromError(dioError(500), request: AuthRequest.login),
+      AuthFailure.server,
+    );
+    expect(
+      authFailureFromError(
+        DioException(
+          requestOptions: RequestOptions(path: '/auth/login'),
+          type: DioExceptionType.connectionError,
+        ),
+        request: AuthRequest.login,
+      ),
+      AuthFailure.network,
+    );
   });
 
   test('family roles map to backend values', () {

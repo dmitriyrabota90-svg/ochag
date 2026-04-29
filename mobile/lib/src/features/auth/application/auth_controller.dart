@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'auth_failure.dart';
 import '../data/auth_repository.dart';
 import '../domain/auth_user.dart';
 
@@ -16,7 +17,7 @@ class AuthState {
     required this.status,
     this.user,
     this.isSubmitting = false,
-    this.errorMessage,
+    this.failure,
     this.successMessage,
   });
 
@@ -28,19 +29,19 @@ class AuthState {
 
   const AuthState.unauthenticated({
     bool isSubmitting = false,
-    String? errorMessage,
+    AuthFailure? failure,
     String? successMessage,
   }) : this(
           status: AuthStatus.unauthenticated,
           isSubmitting: isSubmitting,
-          errorMessage: errorMessage,
+          failure: failure,
           successMessage: successMessage,
         );
 
   final AuthStatus status;
   final AuthUser? user;
   final bool isSubmitting;
-  final String? errorMessage;
+  final AuthFailure? failure;
   final String? successMessage;
 
   bool get isAuthenticated => status == AuthStatus.authenticated;
@@ -49,7 +50,7 @@ class AuthState {
     AuthStatus? status,
     AuthUser? user,
     bool? isSubmitting,
-    String? errorMessage,
+    AuthFailure? failure,
     String? successMessage,
     bool clearMessages = false,
   }) {
@@ -57,7 +58,7 @@ class AuthState {
       status: status ?? this.status,
       user: user ?? this.user,
       isSubmitting: isSubmitting ?? this.isSubmitting,
-      errorMessage: clearMessages ? null : errorMessage ?? this.errorMessage,
+      failure: clearMessages ? null : failure ?? this.failure,
       successMessage:
           clearMessages ? null : successMessage ?? this.successMessage,
     );
@@ -81,6 +82,7 @@ class AuthController extends AsyncNotifier<AuthState> {
     required String password,
   }) async {
     return _submit(
+      request: AuthRequest.login,
       action: () => ref.read(authRepositoryProvider).login(
             email: email,
             password: password,
@@ -94,6 +96,7 @@ class AuthController extends AsyncNotifier<AuthState> {
     String? displayName,
   }) async {
     return _submit(
+      request: AuthRequest.register,
       action: () => ref.read(authRepositoryProvider).register(
             email: email,
             password: password,
@@ -114,7 +117,12 @@ class AuthController extends AsyncNotifier<AuthState> {
       return true;
     } catch (error) {
       state = AsyncData(
-        AuthState.unauthenticated(errorMessage: _messageFromError(error)),
+        AuthState.unauthenticated(
+          failure: authFailureFromError(
+            error,
+            request: AuthRequest.forgotPassword,
+          ),
+        ),
       );
       return false;
     }
@@ -138,7 +146,12 @@ class AuthController extends AsyncNotifier<AuthState> {
       return true;
     } catch (error) {
       state = AsyncData(
-        AuthState.unauthenticated(errorMessage: _messageFromError(error)),
+        AuthState.unauthenticated(
+          failure: authFailureFromError(
+            error,
+            request: AuthRequest.resetPassword,
+          ),
+        ),
       );
       return false;
     }
@@ -156,6 +169,7 @@ class AuthController extends AsyncNotifier<AuthState> {
   }
 
   Future<bool> _submit({
+    required AuthRequest request,
     required Future<AuthUser> Function() action,
   }) async {
     state = AsyncData(
@@ -170,13 +184,11 @@ class AuthController extends AsyncNotifier<AuthState> {
       return true;
     } catch (error) {
       state = AsyncData(
-        AuthState.unauthenticated(errorMessage: _messageFromError(error)),
+        AuthState.unauthenticated(
+          failure: authFailureFromError(error, request: request),
+        ),
       );
       return false;
     }
-  }
-
-  String _messageFromError(Object error) {
-    return error.toString().replaceFirst('Exception: ', '');
   }
 }

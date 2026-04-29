@@ -5,6 +5,7 @@ import 'package:ochag_mobile/l10n/generated/app_localizations.dart';
 import '../../../shared/widgets/app_base_card.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/primary_button.dart';
+import '../../auth/application/auth_controller.dart';
 import '../application/family_controller.dart';
 
 class FamilySetupScreen extends ConsumerStatefulWidget {
@@ -33,8 +34,10 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final authState = ref.watch(authControllerProvider).valueOrNull;
     final familyState = ref.watch(familyControllerProvider).valueOrNull;
-    final isSubmitting = familyState?.isSubmitting ?? false;
+    final isSubmitting = (familyState?.isSubmitting ?? false) ||
+        (authState?.isSubmitting ?? false);
 
     ref.listen(familyControllerProvider, (previous, next) {
       final error = next.valueOrNull?.errorMessage;
@@ -47,9 +50,21 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> {
 
     return AppScaffold(
       title: l10n.familySetupTitle,
+      actions: [
+        IconButton(
+          tooltip: l10n.logoutAction,
+          onPressed: isSubmitting ? null : _logout,
+          icon: const Icon(Icons.logout),
+        ),
+      ],
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          Text(
+            l10n.familySetupDescription,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 16),
           AppBaseCard(
             child: Form(
               key: _createFormKey,
@@ -119,6 +134,26 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 16),
+          AppBaseCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.familySetupSwitchAccountTitle,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(l10n.familySetupSwitchAccountDescription),
+                const SizedBox(height: 12),
+                TextButton.icon(
+                  onPressed: isSubmitting ? null : _logout,
+                  icon: const Icon(Icons.logout),
+                  label: Text(l10n.familySetupSwitchAccountAction),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -140,5 +175,9 @@ class _FamilySetupScreenState extends ConsumerState<FamilySetupScreen> {
     await ref
         .read(familyControllerProvider.notifier)
         .joinFamily(_inviteController.text);
+  }
+
+  Future<void> _logout() async {
+    await ref.read(authControllerProvider.notifier).logout();
   }
 }
