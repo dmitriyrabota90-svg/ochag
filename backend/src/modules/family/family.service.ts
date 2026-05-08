@@ -74,7 +74,9 @@ export class FamilyService {
     const membership = await this.requireCurrentMembership(userId);
 
     return {
-      ...this.toFamilyResponse(membership.family),
+      ...this.toFamilyResponse(membership.family, {
+        includeInviteCode: this.isAdultRole(membership.role),
+      }),
       currentMember: this.toMemberResponse(membership),
     };
   }
@@ -144,9 +146,15 @@ export class FamilyService {
         where: { id: membership.familyId },
         data: { name },
       });
-      await this.createActivity(tx, membership.familyId, userId, 'family.updated', {
-        familyName: updatedFamily.name,
-      });
+      await this.createActivity(
+        tx,
+        membership.familyId,
+        userId,
+        'family.updated',
+        {
+          familyName: updatedFamily.name,
+        },
+      );
 
       return updatedFamily;
     });
@@ -167,9 +175,15 @@ export class FamilyService {
 
     await this.prisma.$transaction(async (tx) => {
       await tx.familyMember.delete({ where: { id: membership.id } });
-      await this.createActivity(tx, membership.familyId, userId, 'family.member.left', {
-        memberId: membership.id,
-      });
+      await this.createActivity(
+        tx,
+        membership.familyId,
+        userId,
+        'family.member.left',
+        {
+          memberId: membership.id,
+        },
+      );
     });
 
     return { success: true, familyDeleted: false };
@@ -251,7 +265,9 @@ export class FamilyService {
     this.assertCreator(membership);
 
     if (membership.id === dto.memberId) {
-      throw new BadRequestException('Creator is already assigned to this member');
+      throw new BadRequestException(
+        'Creator is already assigned to this member',
+      );
     }
 
     const targetMember = await this.requireFamilyMember(
@@ -259,7 +275,9 @@ export class FamilyService {
       dto.memberId,
     );
     if (targetMember.role !== FamilyRole.ADULT) {
-      throw new BadRequestException('Creator can only be transferred to an adult');
+      throw new BadRequestException(
+        'Creator can only be transferred to an adult',
+      );
     }
 
     const updatedTarget = await this.prisma.$transaction(async (tx) => {
@@ -302,9 +320,15 @@ export class FamilyService {
         where: { id: membership.familyId },
         data: { inviteCode },
       });
-      await this.createActivity(tx, membership.familyId, userId, 'family.invite.created', {
-        inviteCode,
-      });
+      await this.createActivity(
+        tx,
+        membership.familyId,
+        userId,
+        'family.invite.created',
+        {
+          hasInviteCode: true,
+        },
+      );
 
       return updatedFamily;
     });
@@ -327,7 +351,7 @@ export class FamilyService {
         membership.familyId,
         userId,
         'family.invite.regenerated',
-        { inviteCode },
+        { hasInviteCode: true },
       );
 
       return updatedFamily;
@@ -495,10 +519,12 @@ export class FamilyService {
       );
     }
 
-    const adultCount = members.filter((member) => this.isAdultRole(member.role))
-      .length;
-    const childCount = members.filter((member) => member.role === FamilyRole.CHILD)
-      .length;
+    const adultCount = members.filter((member) =>
+      this.isAdultRole(member.role),
+    ).length;
+    const childCount = members.filter(
+      (member) => member.role === FamilyRole.CHILD,
+    ).length;
 
     if (
       this.isAdultRole(currentMember.role) &&
@@ -601,17 +627,22 @@ export class FamilyService {
     });
   }
 
-  private toFamilyResponse(family: {
-    id: string;
-    name: string;
-    inviteCode?: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-  }) {
+  private toFamilyResponse(
+    family: {
+      id: string;
+      name: string;
+      inviteCode?: string | null;
+      createdAt: Date;
+      updatedAt: Date;
+    },
+    options: { includeInviteCode?: boolean } = {},
+  ) {
     return {
       id: family.id,
       name: family.name,
-      inviteCode: family.inviteCode ?? null,
+      inviteCode: options.includeInviteCode
+        ? (family.inviteCode ?? null)
+        : null,
       createdAt: family.createdAt,
       updatedAt: family.updatedAt,
     };

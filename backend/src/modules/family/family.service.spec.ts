@@ -92,6 +92,24 @@ describe('FamilyService', () => {
     });
   });
 
+  it('does not expose current family invite code to child members', async () => {
+    const { service, prisma } = createService();
+    prisma.familyMember.findFirst.mockResolvedValue({ ...childMember, family });
+
+    const result = await service.getCurrentFamily(childMember.userId);
+
+    expect(result.inviteCode).toBeNull();
+  });
+
+  it('allows adult members to see current family invite code', async () => {
+    const { service, prisma } = createService();
+    prisma.familyMember.findFirst.mockResolvedValue({ ...adultMember, family });
+
+    const result = await service.getCurrentFamily(adultMember.userId);
+
+    expect(result.inviteCode).toBe(family.inviteCode);
+  });
+
   it('uses public invite base url when it is configured', async () => {
     const { service, prisma } = createService();
     const configService = (

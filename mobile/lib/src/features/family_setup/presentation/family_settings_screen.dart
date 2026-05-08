@@ -68,7 +68,9 @@ class _FamilySettingsScreenState extends ConsumerState<FamilySettingsScreen> {
             children: [
               _FamilyInfoCard(
                 familyName: family.name,
-                inviteCode: state.invite?.inviteCode ?? family.inviteCode,
+                inviteCode: state.canManageInvites
+                    ? state.invite?.inviteCode ?? family.inviteCode
+                    : null,
               ),
               const SizedBox(height: 16),
               if (state.canManageFamily)

@@ -129,6 +129,27 @@ describe('HistoryService', () => {
     expect(result.pageInfo.hasMore).toBe(true);
   });
 
+  it('does not expose invite codes from history payloads', async () => {
+    const { service, prisma } = createService();
+    prisma.familyMember.findFirst.mockResolvedValue(membership);
+    prisma.historyEvent.findMany.mockResolvedValue([
+      {
+        id: 'event-invite',
+        familyId: membership.familyId,
+        actorId: 'user-1',
+        type: 'family.invite.regenerated',
+        payload: { inviteCode: 'SECRET-CODE', hasInviteCode: true },
+        createdAt: now,
+        actor: null,
+      },
+    ]);
+
+    const result = await service.listHistory('user-1', {});
+
+    expect(result.items[0].payload).toEqual({ hasInviteCode: true });
+    expect(result.items[0].payload).not.toHaveProperty('inviteCode');
+  });
+
   it('blocks users without a current family', async () => {
     const { service, prisma } = createService();
     prisma.familyMember.findFirst.mockResolvedValue(null);

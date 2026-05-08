@@ -41,14 +41,16 @@ export class HistoryService {
     });
 
     const hasMore = events.length > limit;
-    const items = events.slice(0, limit).map((event) => this.toHistoryItem(event));
+    const items = events
+      .slice(0, limit)
+      .map((event) => this.toHistoryItem(event));
 
     return {
       items,
       pageInfo: {
         limit,
-        page: query.cursor ? null : query.page ?? 1,
-        nextCursor: hasMore ? items[items.length - 1]?.id ?? null : null,
+        page: query.cursor ? null : (query.page ?? 1),
+        nextCursor: hasMore ? (items[items.length - 1]?.id ?? null) : null,
         hasMore,
       },
       filters: {
@@ -58,7 +60,9 @@ export class HistoryService {
     };
   }
 
-  private async requireCurrentMembership(userId: string): Promise<FamilyMember> {
+  private async requireCurrentMembership(
+    userId: string,
+  ): Promise<FamilyMember> {
     const membership = await this.prisma.familyMember.findFirst({
       where: { userId },
       orderBy: { createdAt: 'asc' },
@@ -105,7 +109,10 @@ export class HistoryService {
       };
     }>,
   ) {
-    const payload = this.toPayloadObject(event.payload);
+    const payload = this.sanitizePayload(
+      event.type,
+      this.toPayloadObject(event.payload),
+    );
     const entity = this.resolveEntity(event.type, payload);
 
     return {
@@ -133,7 +140,22 @@ export class HistoryService {
     return payload as Record<string, Prisma.JsonValue>;
   }
 
-  private resolveEntity(type: string, payload: Record<string, Prisma.JsonValue>) {
+  private sanitizePayload(
+    type: string,
+    payload: Record<string, Prisma.JsonValue>,
+  ) {
+    if (!type.startsWith('family.invite.')) {
+      return payload;
+    }
+
+    const { inviteCode: _inviteCode, ...safePayload } = payload;
+    return safePayload;
+  }
+
+  private resolveEntity(
+    type: string,
+    payload: Record<string, Prisma.JsonValue>,
+  ) {
     const entityType = this.resolveEntityType(type);
     const entityIdKeys: Record<string, string[]> = {
       family: ['familyId'],
@@ -180,7 +202,10 @@ export class HistoryService {
     return 'unknown';
   }
 
-  private buildSummary(type: string, payload: Record<string, Prisma.JsonValue>) {
+  private buildSummary(
+    type: string,
+    payload: Record<string, Prisma.JsonValue>,
+  ) {
     const labels: Record<string, string> = {
       'family.created': 'Family created',
       'family.updated': 'Family updated',
