@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEmail,
   IsOptional,
   IsString,
@@ -20,4 +21,7 @@ export class RegisterDto {
   @IsString()
   @MaxLength(80)
   displayName?: string;
+
+  @IsBoolean()
+  privacyAccepted!: boolean;
 }

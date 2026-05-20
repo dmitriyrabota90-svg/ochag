@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -15,6 +16,8 @@ import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { UpdateMeDto } from './dto/update-me.dto';
 import { MailService } from './mail.service';
+
+export const CURRENT_PRIVACY_VERSION = '2026-05-20';
 
 type AuthUser = {
   id: string;
@@ -34,6 +37,10 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
+    if (dto.privacyAccepted !== true) {
+      throw new BadRequestException('Privacy policy acceptance is required');
+    }
+
     const email = this.normalizeEmail(dto.email);
     const passwordHash = await this.hashSecret(dto.password);
 
@@ -43,6 +50,8 @@ export class AuthService {
           email,
           displayName: dto.displayName?.trim() || null,
           passwordHash,
+          privacyAcceptedAt: new Date(),
+          privacyVersion: CURRENT_PRIVACY_VERSION,
         },
       });
 

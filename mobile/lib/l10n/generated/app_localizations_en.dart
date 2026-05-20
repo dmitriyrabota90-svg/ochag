@@ -146,6 +146,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmAction => 'Confirm';
 
   @override
+  String get privacyConsentText =>
+      'I accept the Privacy Policy and consent to personal data processing.';
+
+  @override
+  String get privacyConsentRequiredError =>
+      'Accept the Privacy Policy to create an account.';
+
+  @override
+  String get privacyPolicyAction => 'Privacy Policy';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy Policy';
+
+  @override
+  String get privacyPolicyDescription =>
+      'The policy is published on the Ochag website. If the page is not available yet, use this address for beta review.';
+
+  @override
+  String get privacyPolicyUrlLabel => 'Policy URL';
+
+  @override
+  String get privacyPolicyCopyAction => 'Copy link';
+
+  @override
+  String get privacyPolicyCopiedMessage => 'Privacy Policy link copied.';
+
+  @override
   String get onboardingTitle => 'Onboarding';
 
   @override

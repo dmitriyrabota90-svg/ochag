@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ochag_mobile/l10n/generated/app_localizations.dart';
 
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/legal/privacy_policy_dialog.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../application/auth_controller.dart';
 import 'auth_error_messages.dart';
@@ -26,6 +27,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  bool _privacyAccepted = false;
 
   @override
   void dispose() {
@@ -109,6 +111,27 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               },
             ),
             const SizedBox(height: 20),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _privacyAccepted,
+              onChanged: isSubmitting
+                  ? null
+                  : (value) {
+                      setState(() {
+                        _privacyAccepted = value ?? false;
+                      });
+                    },
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Text(l10n.privacyConsentText),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () => showPrivacyPolicyDialog(context),
+                child: Text(l10n.privacyPolicyAction),
+              ),
+            ),
+            const SizedBox(height: 12),
             PrimaryButton(
               label: l10n.createAccountAction,
               isLoading: isSubmitting,
@@ -128,9 +151,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    if (!_privacyAccepted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).privacyConsentRequiredError,
+          ),
+        ),
+      );
+      return;
+    }
     await ref.read(authControllerProvider.notifier).register(
           email: _emailController.text,
           password: _passwordController.text,
+          privacyAccepted: true,
           displayName: _nameController.text,
         );
   }

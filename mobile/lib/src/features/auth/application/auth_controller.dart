@@ -93,6 +93,7 @@ class AuthController extends AsyncNotifier<AuthState> {
   Future<bool> register({
     required String email,
     required String password,
+    required bool privacyAccepted,
     String? displayName,
   }) async {
     return _submit(
@@ -100,6 +101,7 @@ class AuthController extends AsyncNotifier<AuthState> {
       action: () => ref.read(authRepositoryProvider).register(
             email: email,
             password: password,
+            privacyAccepted: privacyAccepted,
             displayName: displayName,
           ),
     );

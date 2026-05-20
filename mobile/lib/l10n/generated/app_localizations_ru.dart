@@ -146,6 +146,34 @@ class AppLocalizationsRu extends AppLocalizations {
   String get confirmAction => 'Подтвердить';
 
   @override
+  String get privacyConsentText =>
+      'Я принимаю Политику конфиденциальности и даю согласие на обработку персональных данных.';
+
+  @override
+  String get privacyConsentRequiredError =>
+      'Примите Политику конфиденциальности, чтобы создать аккаунт.';
+
+  @override
+  String get privacyPolicyAction => 'Политика конфиденциальности';
+
+  @override
+  String get privacyPolicyTitle => 'Политика конфиденциальности';
+
+  @override
+  String get privacyPolicyDescription =>
+      'Политика публикуется на сайте Очаг. Если страница еще недоступна, используйте этот адрес для beta-проверки.';
+
+  @override
+  String get privacyPolicyUrlLabel => 'Ссылка на политику';
+
+  @override
+  String get privacyPolicyCopyAction => 'Скопировать ссылку';
+
+  @override
+  String get privacyPolicyCopiedMessage =>
+      'Ссылка на Политику конфиденциальности скопирована.';
+
+  @override
   String get onboardingTitle => 'Онбординг';
 
   @override

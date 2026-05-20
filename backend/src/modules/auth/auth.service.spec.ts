@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 
@@ -80,12 +81,15 @@ describe('AuthService', () => {
       email: ' USER@example.com ',
       password: 'password-123',
       displayName: 'User',
+      privacyAccepted: true,
     });
 
     expect(prisma.user.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         email: 'user@example.com',
         displayName: 'User',
+        privacyAcceptedAt: expect.any(Date),
+        privacyVersion: '2026-05-20',
       }),
     });
     const passwordHash = prisma.user.create.mock.calls[0][0].data.passwordHash;
@@ -101,6 +105,22 @@ describe('AuthService', () => {
         user: expect.objectContaining({ email: 'user@example.com' }),
       }),
     );
+  });
+
+  it('rejects registration without privacy acceptance', async () => {
+    const { service, prisma } = createService();
+
+    await expect(
+      service.register({
+        email: 'user@example.com',
+        password: 'password-123',
+        displayName: 'User',
+        privacyAccepted: false,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+
+    expect(prisma.user.create).not.toHaveBeenCalled();
+    expect(prisma.refreshSession.create).not.toHaveBeenCalled();
   });
 
   it('accepts forgot-password even when email does not exist', async () => {

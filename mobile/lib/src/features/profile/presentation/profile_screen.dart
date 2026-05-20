@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ochag_mobile/l10n/generated/app_localizations.dart';
 
+import '../../../shared/legal/privacy_policy_dialog.dart';
 import '../../../shared/widgets/app_base_card.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/primary_button.dart';
@@ -107,6 +108,12 @@ class ProfileScreen extends ConsumerWidget {
             title: Text(l10n.feedbackTitle),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push(FeedbackScreen.routePath),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.privacyPolicyAction),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => showPrivacyPolicyDialog(context),
           ),
           const SizedBox(height: 16),
           PrimaryButton(

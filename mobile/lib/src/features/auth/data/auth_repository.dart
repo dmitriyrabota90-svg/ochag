@@ -40,6 +40,7 @@ class AuthRepository {
   Future<AuthUser> register({
     required String email,
     required String password,
+    required bool privacyAccepted,
     String? displayName,
   }) async {
     final response = await _apiClient.post<Map<String, dynamic>>(
@@ -47,6 +48,7 @@ class AuthRepository {
       data: {
         'email': email.trim(),
         'password': password,
+        'privacyAccepted': privacyAccepted,
         if (displayName != null && displayName.trim().isNotEmpty)
           'displayName': displayName.trim(),
       },

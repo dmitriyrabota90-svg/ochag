@@ -356,6 +356,54 @@ abstract class AppLocalizations {
   /// **'Confirm'**
   String get confirmAction;
 
+  /// No description provided for @privacyConsentText.
+  ///
+  /// In en, this message translates to:
+  /// **'I accept the Privacy Policy and consent to personal data processing.'**
+  String get privacyConsentText;
+
+  /// No description provided for @privacyConsentRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept the Privacy Policy to create an account.'**
+  String get privacyConsentRequiredError;
+
+  /// No description provided for @privacyPolicyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicyAction;
+
+  /// No description provided for @privacyPolicyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicyTitle;
+
+  /// No description provided for @privacyPolicyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The policy is published on the Ochag website. If the page is not available yet, use this address for beta review.'**
+  String get privacyPolicyDescription;
+
+  /// No description provided for @privacyPolicyUrlLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy URL'**
+  String get privacyPolicyUrlLabel;
+
+  /// No description provided for @privacyPolicyCopyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get privacyPolicyCopyAction;
+
+  /// No description provided for @privacyPolicyCopiedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy link copied.'**
+  String get privacyPolicyCopiedMessage;
+
   /// No description provided for @onboardingTitle.
   ///
   /// In en, this message translates to:
